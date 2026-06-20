@@ -79,7 +79,7 @@ Cross-dataset centrality concordance was assessed using Spearman rank correlatio
 
 ### Statistical Analysis
 
-Kruskal-Wallis tests with eta-squared effect sizes were used for three-group (vascular bed) comparisons. Pairwise Mann-Whitney U tests with Bonferroni correction (3 comparisons per module) were applied for post-hoc comparisons. Effect sizes included Cohen's d (with bootstrap 95% CI, n=2,000) and Hedges' g (bias-corrected). Post-hoc statistical power was computed for each pairwise comparison given observed effect size and sample sizes (α=0.05, two-tailed). For the femoral artery cohort (n=7 donors), minimum detectable effect sizes at 80% power were computed analytically. Analyses were performed in Python (scanpy v1.9, numpy, scipy, pandas, networkx) and R (4.5.0). All analysis scripts are available from the corresponding author upon reasonable request.
+Kruskal-Wallis tests with eta-squared effect sizes were used for three-group (vascular bed) comparisons. Pairwise Mann-Whitney U tests with Bonferroni correction (3 comparisons per module) were applied for post-hoc comparisons. Effect sizes included Cohen's d (with bootstrap 95% CI, n=2,000) and Hedges' g (bias-corrected). Post-hoc statistical power was computed for each pairwise comparison given observed effect size and sample sizes (α=0.05, two-tailed). For the femoral artery cohort (n=7 donors), minimum detectable effect sizes at 80% power were computed analytically. Analyses were performed in Python (scanpy v1.9, numpy, scipy, pandas, networkx) and R (4.5.0). All analysis scripts are available at https://github.com/Caier-dortor/atherosclerosis_atlas.
 
 ---
 
@@ -171,7 +171,7 @@ This study involved re-analysis of publicly available, de-identified single-cell
 
 ## Data Availability
 
-The primary single-cell atlas is publicly available via CELLxGENE (Collection ID: db70986c-7d91-49fe-a399-a4730be394ac) and from the Traeuble et al. GitHub repository (https://github.com/kotr98/reproducibility-plaque-atlas). External validation dataset GSE131778 is available from GEO under accession GSE131778. The re-processed GSE155512 dataset is available from GEO under accession GSE155512. All analysis code, processed data files, and figure generation scripts are available from the corresponding author upon reasonable request.
+The primary single-cell atlas is publicly available via CELLxGENE (Collection ID: db70986c-7d91-49fe-a399-a4730be394ac) and from the Traeuble et al. GitHub repository (https://github.com/kotr98/reproducibility-plaque-atlas). External validation dataset GSE131778 is available from GEO under accession GSE131778. The re-processed GSE155512 dataset is available from GEO under accession GSE155512. All analysis code, processed data files, and figure generation scripts are available at https://github.com/Caier-dortor/atherosclerosis_atlas.
 
 ## Author Contributions
 
