@@ -1,8 +1,8 @@
 """
 Phase 3: Metabolism-Epigenetics Coupling Analysis (v2)
-— Mediation analysis (P0-corrected)
-— Computational metabolite inference preparation
-— Partial correlation (P0)
+-- Mediation analysis (P0-corrected)
+-- Computational metabolite inference preparation
+-- Partial correlation (P0)
 Uses output from phase1_macrophage_analysis.py
 """
 
@@ -250,10 +250,7 @@ ORDER = ['carotid', 'coronary', 'femoral']
 plt.rcParams.update({
     'font.family': 'serif',
     'font.serif': ['Times New Roman', 'Times', 'DejaVu Serif', 'serif'],
-    'mathtext.fontset': 'custom',
-    'mathtext.rm': 'Times New Roman',
-    'mathtext.it': 'Times New Roman:italic',
-    'mathtext.bf': 'Times New Roman:bold',
+    'mathtext.fontset': 'dejavuserif',
     'font.size': 8,
     'axes.spines.right': True,
     'axes.spines.top': True,
@@ -316,15 +313,15 @@ if 'carotid' in bed_corr_matrices and 'femoral' in bed_corr_matrices:
         for epi in epi_genes_expressed:
             diff_corr.loc[met, epi] = bed_corr_matrices['carotid'].loc[met, epi] - bed_corr_matrices['femoral'].loc[met, epi]
     # Validate consistency: print key pairs for cross-check with Panel D
-    print('Panel C validation — Δr (Carotid − Femoral) for key pairs:')
+    print('Panel C validation -- delta-r (Carotid - Femoral) for key pairs:')
     for met_mod, epi in [('FAO_mean', 'SIRT1'), ('Glycolysis_mean', 'KMT2A'), ('FAO_mean', 'TET2')]:
         if met_mod in diff_corr.index and epi in diff_corr.columns:
             c_r = bed_corr_matrices['carotid'].loc[met_mod, epi]
             f_r = bed_corr_matrices['femoral'].loc[met_mod, epi]
             delta = diff_corr.loc[met_mod, epi]
-            print(f'  {met_mod} × {epi}: carotid={c_r:+.3f}, femoral={f_r:+.3f}, Δr={delta:+.3f}')
+            print(f'  {met_mod} × {epi}: carotid={c_r:+.3f}, femoral={f_r:+.3f}, delta-r={delta:+.3f}')
             if abs(delta) > 0.5:
-                print(f'    WARNING: Large Δr — verify Panel D consistency')
+                print(f'    WARNING: Large delta-r -- verify Panel D consistency')
     vmax_val = max(abs(diff_corr.values).max(), 0.5)
     sns.heatmap(diff_corr, cmap='RdBu_r', center=0, annot=True, fmt='.2f',
                 ax=ax3, annot_kws={'fontsize': 7.5},

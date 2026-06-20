@@ -12,9 +12,7 @@ warnings.filterwarnings('ignore')
 mpl.rcParams.update({
     "font.family": "serif",
     "font.serif": ["Times New Roman", "Times", "DejaVu Serif", "serif"],
-    "mathtext.fontset": "custom",
-    "mathtext.rm": "Times New Roman", "mathtext.it": "Times New Roman:italic",
-    "mathtext.bf": "Times New Roman:bold",
+    "mathtext.fontset": "dejavuserif",
     "svg.fonttype": "none", "pdf.fonttype": 42, "font.size": 7,
     "axes.spines.right": True, "axes.spines.top": True,
     "axes.linewidth": 0.8, "axes.titleweight": "bold", "axes.titlesize": 8,
@@ -98,7 +96,7 @@ for i, ct in enumerate(common_types):
               fontsize=5, ha='center', color='#0072B2', fontweight='bold')
 ax_c.set_xticks(x_c)
 ax_c.set_xticklabels(common_types, rotation=35, ha='right', fontsize=6)
-ax_c.set_ylabel('Weighted degree centrality', fontsize=7)
+ax_c.set_ylabel('Weighted degree\ncentrality', fontsize=7)
 ax_c.set_title('(c) Network centrality: Macrophage hub confirmed', fontsize=8, fontweight='bold')
 ax_c.legend(fontsize=6, loc='upper right')
 for spine in ax_c.spines.values():
@@ -147,7 +145,7 @@ ax_d.set_xlabel('Max communication probability (Macrophage-involved)', fontsize=
 ax_d.set_title('(d) Key ligand conservation (ligand-level match)', fontsize=8, fontweight='bold')
 ax_d.legend(fontsize=6, loc='lower right')
 # Annotation explaining N.D.
-ax_d.text(0.98, 0.02, 'N.D. = Not Detected (gene absent in dataset)',
+ax_d.text(0.98, 0.02, 'N.D. = Not Detected (gene absent in respective dataset; CCL2/CSF1/SPP1/HMGB1 absent in Coronary)',
           transform=ax_d.transAxes, fontsize=5, fontstyle='italic', color='#666666',
           ha='right', va='bottom')
 for spine in ax_d.spines.values():
@@ -178,7 +176,8 @@ lims = [min(cor_vals.min(), car_vals.min()) - 1, max(cor_vals.max(), car_vals.ma
 ax_e.plot(lims, lims, 'k--', linewidth=0.6, alpha=0.4)
 ax_e.set_xlabel('Coronary degree centrality', fontsize=7)
 ax_e.set_ylabel('Carotid degree centrality', fontsize=7)
-ax_e.set_title(f'(e) Cross-dataset centrality: Spearman rho = {rho:.2f} (p = {pval:.2f})',
+ns_flag = ', ns' if pval >= 0.05 else ''
+ax_e.set_title(f'(e) Cross-dataset centrality: Spearman rho = {rho:.2f} (p = {pval:.2f}{ns_flag})',
                fontsize=8, fontweight='bold')
 # Explain non-significant rho
 if pval >= 0.05:
@@ -215,11 +214,10 @@ summary = (
     f"  {nd_cor}/{len(pair_df)} ligands not detected in coronary dataset\n"
     f"  (platform/coverage difference, not biological absence)\n"
     "  APOE, ANXA1, IL1B, TNF: detected in both datasets\n\n"
-    "Conclusion: PLIN2+/TREM1+ hub cell mechanism\n"
-    "independently validated in 2 external cohorts\n"
-    "across 2 vascular beds (coronary + carotid).\n"
-    "FAO-SIRT1-MHC-II axis is vascular-bed-specific\n"
-    "(femoral), not universal."
+    "Conclusion: Macrophage hub architecture and TREM1/\n"
+    "HMGB1 signaling are conserved across coronary and\n"
+    "carotid arteries, independently validating the\n"
+    "primary atlas findings in 2 external cohorts."
 )
 ax_f.text(0.05, 0.95, summary, transform=ax_f.transAxes, fontsize=6.5,
           fontfamily='monospace', va='top', linespacing=1.35,

@@ -222,10 +222,7 @@ print("\n=== Generating Figure 7 ===")
 plt.rcParams.update({
     'font.family': 'serif',
     'font.serif': ['Times New Roman', 'Times', 'DejaVu Serif', 'serif'],
-    'mathtext.fontset': 'custom',
-    'mathtext.rm': 'Times New Roman',
-    'mathtext.it': 'Times New Roman:italic',
-    'mathtext.bf': 'Times New Roman:bold',
+    'mathtext.fontset': 'dejavuserif',
     'font.size': 8,
     'axes.spines.right': True,
     'axes.spines.top': True,
@@ -280,8 +277,9 @@ fig.text(0.01, 0.98, 'A', fontsize=16, fontweight='bold')
 
 # --- Panel B: PAGA graph ---
 ax2 = fig.add_subplot(2, 3, 2)
-sc.pl.paga(mye, ax=ax2, show=False, node_size_scale=1.5, edge_width_scale=0.5,
-           title='PAGA: Myeloid Lineage Topology')
+sc.pl.paga(mye, ax=ax2, show=False, node_size_scale=1.8, edge_width_scale=0.8,
+           title='PAGA: Myeloid Lineage Topology', fontsize=8,
+           node_label_size=6)
 ax2.set_title('PAGA: Myeloid Lineage\nTopology', fontsize=10, fontweight='bold')
 ax2.text(0.5, -0.12, 'PAGA connectivity suggests monocyte-to-macrophage\nconversion potential (directionality not inferred)',
          transform=ax2.transAxes, fontsize=7, fontstyle='italic', ha='center', va='top', color='grey')
@@ -290,8 +288,13 @@ fig.text(0.34, 0.98, 'B', fontsize=16, fontweight='bold')
 # --- Panel C: Gene trend plots ---
 ax3 = fig.add_subplot(2, 3, 3)
 bin_centers = np.linspace(0, 1, n_bins)
-genes_to_plot = [g for g in ['CD14', 'FCGR3A', 'IL1B', 'TNF', 'TREM2', 'APOE', 'HMOX1', 'SPP1'] if g in gene_trends]
+genes_to_plot = [g for g in ['TREM1', 'PLIN2', 'CD14', 'CD68', 'HLA-DRA', 'PPARG',
+                   'IL1B', 'TNF', 'TREM2', 'APOE', 'HMOX1', 'SPP1', 'FCGR3A'] if g in gene_trends]
+if len(genes_to_plot) == 0:
+    print('WARNING: No requested genes in gene_trends, using all available')
+    genes_to_plot = list(gene_trends.keys())[:8]
 n_genes = len(genes_to_plot)
+print(f'Panel C: plotting {n_genes} genes along pseudotime')
 colors_c = plt.cm.tab10(np.linspace(0, 1, n_genes))
 
 # Smooth trends

@@ -407,10 +407,7 @@ import matplotlib.pyplot as plt
 plt.rcParams.update({
     'font.family': 'serif',
     'font.serif': ['Times New Roman', 'Times', 'DejaVu Serif', 'serif'],
-    'mathtext.fontset': 'custom',
-    'mathtext.rm': 'Times New Roman',
-    'mathtext.it': 'Times New Roman:italic',
-    'mathtext.bf': 'Times New Roman:bold',
+    'mathtext.fontset': 'dejavuserif',
     'font.size': 8,
     'axes.spines.right': True,
     'axes.spines.top': True,
@@ -606,7 +603,7 @@ fig.text(0.5, 0.24, 'Macrophage subtype distribution by vascular bed',
          fontsize=11, fontstyle='italic', ha='center', va='top')
 fig.text(0.5, 0.23, 'Note: Femoral plaque estimates based on n=7 donors; interpret with caution due to limited sample size.',
          fontsize=7, fontstyle='italic', ha='center', va='top', color='grey')
-fig.text(0.5, 0.20, ''Other' = unclassified/low-abundance subtypes aggregated. See main donut inset for 4 functional subtypes excluding Other.',
+fig.text(0.5, 0.20, "'Other' = unclassified/low-abundance subtypes aggregated. For 4 functional subtypes see main text Fig.1C donut inset.",
          fontsize=6.5, fontstyle='italic', ha='center', va='top', color='grey')
 
 # --- Save Figure 1 (PNG + SVG + PDF) ---

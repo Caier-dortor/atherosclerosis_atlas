@@ -263,10 +263,7 @@ print("\n=== Generating Figure 5 ===")
 plt.rcParams.update({
     'font.family': 'serif',
     'font.serif': ['Times New Roman', 'Times', 'DejaVu Serif', 'serif'],
-    'mathtext.fontset': 'custom',
-    'mathtext.rm': 'Times New Roman',
-    'mathtext.it': 'Times New Roman:italic',
-    'mathtext.bf': 'Times New Roman:bold',
+    'mathtext.fontset': 'dejavuserif',
     'font.size': 8,
     'axes.spines.right': True,
     'axes.spines.top': True,

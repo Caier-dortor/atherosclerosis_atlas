@@ -10,9 +10,7 @@ from matplotlib.lines import Line2D
 mpl.rcParams.update({
     "font.family": "serif",
     "font.serif": ["Times New Roman", "Times", "DejaVu Serif", "serif"],
-    "mathtext.fontset": "custom",
-    "mathtext.rm": "Times New Roman", "mathtext.it": "Times New Roman:italic",
-    "mathtext.bf": "Times New Roman:bold",
+    "mathtext.fontset": "dejavuserif",
     "svg.fonttype": "none", "pdf.fonttype": 42, "font.size": 7,
     "axes.spines.right": True, "axes.spines.top": True,
     "axes.linewidth": 0.8, "axes.titleweight": "bold", "axes.titlesize": 8,
@@ -91,7 +89,7 @@ for j, ct in enumerate(x_ct):
 ax_a.set_xticks(range(len(x_ct)))
 ax_a.set_xticklabels(CT_SHORT, rotation=30, ha='right', fontsize=7.5)
 ax_a.set_yticks(range(len(y_genes)))
-ax_a.set_yticklabels(y_genes, fontsize=7.5, fontstyle='italic')
+ax_a.set_yticklabels(y_genes, fontsize=8, fontstyle='italic')
 ax_a.set_title('(a) DEG: Macrophage subtypes vs Monocyte', fontsize=9, fontweight='bold')
 
 # Legend
@@ -136,7 +134,7 @@ for _, row in up_enrich.iterrows():
     ax_b.scatter(x, y, s=sz, c=clr, edgecolors='black', linewidth=lw, alpha=0.85, zorder=3)
     # Annotate p-value
     p_val = row["pval"]; p_str = f"{p_val:.1e}" if p_val < 0.01 else f"{p_val:.3f}"
-    ax_b.annotate(p_str, xy=(x+0.25, y), fontsize=4.5, va='center', color='#333333')
+    ax_b.annotate(p_str, xy=(x+0.25, y), fontsize=5.5, va='center', color='#333333')
 
 ax_b.set_xticks(range(len(ct_order)))
 ax_b.set_xticklabels(CT_SHORT, rotation=30, ha='right', fontsize=7.5)
