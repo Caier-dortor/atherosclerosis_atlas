@@ -305,9 +305,9 @@ outgoing = outgoing.reindex(mac_l2_types, fill_value=0)
 im1 = ax1.imshow(outgoing.values, aspect='auto', cmap='YlOrRd',
                   vmin=0, vmax=outgoing.values.max())
 ax1.set_xticks(range(len(l1_types)))
-ax1.set_xticklabels(l1_types, rotation=45, ha='right', fontsize=6.5)
+ax1.set_xticklabels([l.replace('Macrophage','Mac').replace('PLIN2+/TREM1+','Hub')[:15] for l in l1_types], rotation=45, ha='right', fontsize=6.5)
 ax1.set_yticks(range(len(mac_l2_types)))
-ax1.set_yticklabels(mac_l2_types, fontsize=6.5)
+ax1.set_yticklabels([l.replace('Macrophage','Mac').replace('PLIN2+/TREM1+','Hub')[:15] for l in mac_l2_types], fontsize=6.5)
 ax1.set_title('Macrophage L2 Outgoing\nCommunication Strength', fontsize=10, fontweight='bold')
 plt.colorbar(im1, ax=ax1, shrink=0.8, label='Mean comm. prob.')
 fig.text(0.01, 0.98, 'A', fontsize=16, fontweight='bold')
@@ -331,7 +331,7 @@ for i, s in enumerate(mac_l2_types):
     x, y = r_circle * np.cos(theta_s[i]), r_circle * np.sin(theta_s[i])
     sender_pos[s] = (x, y)
     ax2.scatter(x, y, c=mac_l2_colors.get(s, '#999999'), s=80, zorder=5, edgecolors='white', linewidth=0.5)
-    ax2.annotate(s[:12] if len(s) > 12 else s, (x, y), textcoords="offset points",
+    ax2.annotate(s.replace('Macrophage','Mac').replace('PLIN2+/TREM1+','Hub'), (x, y), textcoords="offset points",
                 xytext=(-15 if x < 0 else 5, 0), fontsize=5.5, ha='right' if x < 0 else 'left')
 
 # Place receiver nodes
@@ -412,10 +412,18 @@ ax4.plot([0, lim_max], [0, lim_max], 'k--', linewidth=0.5, alpha=0.3)
 ax4.set_xlabel('Carotid comm. prob.', fontsize=9)
 ax4.set_ylabel('Femoral comm. prob.', fontsize=9)
 ax4.set_title('Differential Communication:\nCarotid vs Femoral', fontsize=10, fontweight='bold')
-# Annotate top-5
-for i, (_, row) in enumerate(top_diff.head(5).iterrows()):
-    ax4.annotate(row['pair'][:20], (row['carotid_prob'], row['femoral_prob']),
-                fontsize=4.5, alpha=0.7)
+# Annotate top-5 off-diagonal outliers only (most informative)
+annotated = 0
+for i, (_, row) in enumerate(top_diff.iterrows()):
+    if annotated >= 5:
+        break
+    dev = abs(row['carotid_prob'] - row['femoral_prob'])
+    if dev > 0.15:  # only label pairs with substantial bed difference
+        short_pair = row['pair'][:25]
+        ax4.annotate(short_pair, (row['carotid_prob'], row['femoral_prob']),
+                    fontsize=5.5, alpha=0.85,
+                    bbox=dict(boxstyle='round,pad=0.1', facecolor='white', edgecolor='#DDDDDD', alpha=0.7))
+        annotated += 1
 legend_handles = [
     plt.scatter([], [], c=CB_PALETTE['carotid'], s=30, label='Carotid > Femoral'),
     plt.scatter([], [], c=CB_PALETTE['femoral'], s=30, label='Femoral > Carotid')
@@ -457,9 +465,11 @@ for node in G.nodes():
 nx.draw_networkx_nodes(G, pos, ax=ax5, node_color=node_colors, node_size=node_sizes,
                       edgecolors='white', linewidths=0.5)
 edge_weights = [G[u][v]['weight'] * 3 for u, v in G.edges()]
-nx.draw_networkx_edges(G, pos, ax=ax5, width=edge_weights, alpha=0.4, edge_color='#666666')
+nx.draw_networkx_edges(G, pos, ax=ax5, width=edge_weights, alpha=0.5, edge_color='#555555',
+                       connectionstyle='arc3,rad=0.1')
 # Labels
-nx.draw_networkx_labels(G, pos, ax=ax5, font_size=5, font_family='serif')
+nx.draw_networkx_labels(G, pos, ax=ax5, font_size=6, font_family='serif',
+                        bbox=dict(boxstyle='round,pad=0.15', facecolor='white', edgecolor='none', alpha=0.6))
 ax5.set_title('Top-20 Macrophage-Centric\nL-R Interaction Network', fontsize=10, fontweight='bold')
 ax5.axis('off')
 fig.text(0.34, 0.48, 'E', fontsize=16, fontweight='bold')

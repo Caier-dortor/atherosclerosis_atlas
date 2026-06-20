@@ -489,7 +489,7 @@ def add_sig_bars(ax, data, col, beds, y_max, pairwise_results):
 # =============================================================
 # Build Figure 1: 3-row multi-panel (unified GridSpec — no overlap)
 # =============================================================
-fig = plt.figure(figsize=(22, 20), facecolor='white')
+fig = plt.figure(figsize=(20, 15), facecolor='white')
 
 # Main 3-row GridSpec: Panel A (2x3 boxplots) / Panel B (stacked bar) / Panel C (1x3 donuts)
 gs_main = GridSpec(3, 1, figure=fig, height_ratios=[1.6, 0.85, 0.95],
@@ -530,7 +530,7 @@ for i, col in enumerate(plot_cols):
     # Clean label
     label = col.replace('_score', '').replace('_', ' ')
     ax.set_title(f'{label}\nKW H={H:.1f}, p={p_kw:.2e}, η²={eta2:.3f} {sig}',
-                 fontsize=9, fontweight='bold', fontfamily='sans-serif')
+                 fontsize=9, fontweight='bold', fontfamily='serif')
     ax.set_xlabel('')
     ax.tick_params(axis='x', labelsize=8)
     ax.tick_params(axis='y', labelsize=8)
@@ -543,10 +543,8 @@ for i, col in enumerate(plot_cols):
                                   edgecolor='#009E73', linewidth=1, alpha=0.85))
 
 # Panel label + title for row A
-fig.text(0.02, 0.95, 'A', fontsize=16, fontweight='bold', fontfamily='sans-serif',
+fig.text(0.02, 0.95, 'A', fontsize=16, fontweight='bold', fontfamily='serif',
          va='top', ha='left')
-fig.text(0.5, 0.95, 'Donor-level module scores: Femoral plaques unexpectedly show highest TI and inflammatory signatures',
-         fontsize=10, fontstyle='italic', ha='center', va='top', color='#009E73')
 fig.text(0.98, 0.95, 'Donors: C=50, Co=13, F=7 | Cells: C=34.8k, Co=1.9k, F=1.2k | VarPart: plaque_location=0%',
          fontsize=6, ha='right', va='top',
          bbox=dict(boxstyle='round,pad=0.3', facecolor='#F5F5F5', alpha=0.8))
@@ -571,10 +569,10 @@ else:
     ax_b.text(0.5, 0.5, 'No L2 macrophage subtypes found', ha='center', va='center')
     ax_b.set_visible(False)
 
-fig.text(0.02, 0.59, 'B', fontsize=16, fontweight='bold', fontfamily='sans-serif',
+fig.text(0.02, 0.59, 'B', fontsize=16, fontweight='bold', fontfamily='serif',
          va='top', ha='left')
-fig.text(0.5, 0.59, 'Macrophage subtype composition (donor-mean)',
-         fontsize=11, fontstyle='italic', ha='center', va='top')
+fig.text(0.5, 0.59, 'Macrophage subtype composition by vascular bed (donor-mean)',
+         fontsize=9, fontstyle='italic', ha='center', va='top')
 
 # --- Panel C: Macrophage subtypes per bed (donut charts) ---
 gs_c = GridSpecFromSubplotSpec(1, 3, subplot_spec=gs_main[2], wspace=0.25)
@@ -595,19 +593,21 @@ for i, bed in enumerate(BEDS_ORDER):
         wedgeprops=dict(width=0.38, edgecolor='white', linewidth=0.8))
     # Center circle for donut
     ax.text(0, 0, f'n={bed_mac.n_obs:,}', ha='center', va='center', fontsize=9, fontweight='bold')
-    ax.set_title(f'{bed.capitalize()}', fontsize=12, fontweight='bold', fontfamily='sans-serif')
+    ax.set_title(f'{bed.capitalize()}', fontsize=12, fontweight='bold', fontfamily='serif')
     # Only show legend on the last subplot
     if i == 2:
         ax.legend(wedges, [shorten_label(c) for c in counts.index],
                   bbox_to_anchor=(1.15, 1), loc='upper left', fontsize=7,
                   title='L2 Subtype', title_fontsize=8, frameon=True)
 
-fig.text(0.02, 0.24, 'C', fontsize=16, fontweight='bold', fontfamily='sans-serif',
+fig.text(0.02, 0.24, 'C', fontsize=16, fontweight='bold', fontfamily='serif',
          va='top', ha='left')
 fig.text(0.5, 0.24, 'Macrophage subtype distribution by vascular bed',
          fontsize=11, fontstyle='italic', ha='center', va='top')
-fig.text(0.5, 0.21, 'Note: Femoral plaque estimates based on n=7 donors; interpret with caution due to limited sample size.',
-         fontsize=8, fontstyle='italic', ha='center', va='top', color='grey')
+fig.text(0.5, 0.23, 'Note: Femoral plaque estimates based on n=7 donors; interpret with caution due to limited sample size.',
+         fontsize=7, fontstyle='italic', ha='center', va='top', color='grey')
+fig.text(0.5, 0.20, ''Other' = unclassified/low-abundance subtypes aggregated. See main donut inset for 4 functional subtypes excluding Other.',
+         fontsize=6.5, fontstyle='italic', ha='center', va='top', color='grey')
 
 # --- Save Figure 1 (PNG + SVG + PDF) ---
 plt.tight_layout(rect=[0, 0, 1, 0.96])

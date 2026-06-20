@@ -62,8 +62,9 @@ for i, ct in enumerate(cell_types):
     ci_hi = boot_ci.loc[ct, 'ci_hi'] - ci_delta
     # Show CI on the delta as text annotation
     ax_a.annotate(f"Δ={abs(ci_delta):.1f}\n95%CI[{abs(boot_ci.loc[ct,'ci_hi']):.1f},{abs(boot_ci.loc[ct,'ci_lo']):.1f}]",
-                  xy=(i, delta.loc[ct, 'degree_ko']), fontsize=5, ha='center', va='top',
-                  color='#CC0000', fontweight='bold')
+                  xy=(i, 0), fontsize=5, ha='center', va='bottom',
+                  color='#222222', fontweight='bold',
+                  bbox=dict(boxstyle='round,pad=0.15', facecolor='white', edgecolor='#BBBBBB', alpha=0.85))
 
 ax_a.set_xticks(x)
 ax_a.set_xticklabels([c.replace('Macrophage','Mac').replace('PLIN2+/TREM1+','Hub') for c in cell_types],
@@ -91,13 +92,17 @@ edge_widths = [max(0.3, G[u][v]['weight'] * 3) for u, v in G.edges()]
 edges_to_draw = [(u, v) for u, v in G.edges() if G[u][v]['weight'] > 1.0]
 edge_w_sub = [G[u][v]['weight'] * 3 for u, v in edges_to_draw]
 
-nx.draw_networkx_nodes(G, pos, ax=ax_b, node_size=node_sizes, node_color=node_colors,
-                       edgecolors='black', linewidths=0.6)
-nx.draw_networkx_edges(G, pos, ax=ax_b, edgelist=edges_to_draw, width=edge_w_sub,
-                       edge_color='#666666', alpha=0.6, arrows=True, arrowsize=8, arrowstyle='->')
-# Labels with shortened names
+ax_b.set_facecolor('white')
+pos2 = nx.spring_layout(G, k=1.8, iterations=50, seed=42)
+nx.draw_networkx_nodes(G, pos2, ax=ax_b, node_size=node_sizes, node_color=node_colors,
+                       edgecolors='#333333', linewidths=0.8, alpha=0.95)
+edge_colors_b = [CT_COLORS.get(u, '#999999') for u, v in edges_to_draw]
+nx.draw_networkx_edges(G, pos2, ax=ax_b, edgelist=edges_to_draw, width=edge_w_sub,
+                       edge_color=edge_colors_b, alpha=0.5, arrows=True, arrowsize=10, arrowstyle='->',
+                       connectionstyle='arc3,rad=0.1')
 labels = {n: n.replace('Macrophage','Mac').replace('PLIN2+/TREM1+','Hub') for n in G.nodes()}
-nx.draw_networkx_labels(G, pos, ax=ax_b, labels=labels, font_size=5.5, font_family='serif')
+nx.draw_networkx_labels(G, pos2, ax=ax_b, labels=labels, font_size=6, font_family='serif',
+                        font_weight='bold', bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='none', alpha=0.7))
 ax_b.set_title('(b) L-R network topology (baseline)', fontsize=8, fontweight='bold')
 ax_b.axis('off')
 
@@ -126,7 +131,24 @@ trem1_base = details_base[(details_base['ligand'] == 'TREM1') | (details_base['r
 trem1_base = trem1_base.sort_values('prob', ascending=False).head(12)
 labels_d = [f"{r['sender'].replace('Macrophage','Mac').replace('PLIN2+/TREM1+','Hub')}→{r['receiver'].replace('Macrophage','Mac').replace('PLIN2+/TREM1+','Hub')}" for _, r in trem1_base.iterrows()]
 y_d = list(range(len(labels_d)))
-colors_d = ['#E64A19' if 'HMGB1' in r['ligand'] else '#FFB300' for _, r in trem1_base.iterrows()]
+# Color by actual ligand-receptor identity; legend only for types present
+pair_info = []
+for _, r in trem1_base.iterrows():
+    lig, rec = str(r['ligand']), str(r['receptor'])
+    if 'HMGB1' in lig or 'HMGB1' in rec:
+        pair_info.append(('#E64A19', 'HMGB1-TREM1'))
+    elif 'HSPA1A' in lig or 'HSPA1A' in rec:
+        pair_info.append(('#FFB300', 'HSPA1A-TREM1'))
+    else:
+        pair_info.append(('#4472C4', 'TREM1-other'))
+colors_d = [p[0] for p in pair_info]
+# Build legend only for types actually present
+used_types = set(p[1] for p in pair_info)
+legend_items = []
+type_map = {'HMGB1-TREM1': '#E64A19', 'HSPA1A-TREM1': '#FFB300', 'TREM1-other': '#4472C4'}
+for t in ['HMGB1-TREM1', 'HSPA1A-TREM1', 'TREM1-other']:
+    if t in used_types:
+        legend_items.append(t)
 ax_d.barh(y_d, trem1_base['prob'].values, color=colors_d, edgecolor='black', linewidth=0.4, height=0.6)
 ax_d.set_yticks(y_d)
 ax_d.set_yticklabels(labels_d, fontsize=5)
@@ -144,16 +166,15 @@ comp_sort = comp_df.sort_values('baseline', ascending=True)
 y_e = range(len(comp_sort))
 bar_colors = ['#CC0000' if abs(r['pct_change']) > 90 else ('#F0E442' if r['delta'] > 0.01 else '#4472C4')
               for _, r in comp_sort.iterrows()]
-ax_e.barh(list(y_e), comp_sort['baseline'].values, color=bar_colors, edgecolor='black', linewidth=0.4, height=0.6, label='Baseline')
-ax_e.barh(list(y_e), comp_sort['ko'].values, color='white', edgecolor='black', linewidth=0.3, height=0.3, hatch='///', label='TREM1-KO')
+ax_e.barh(list(y_e), comp_sort['delta'].values, color=bar_colors, edgecolor='black', linewidth=0.4, height=0.6)
+ax_e.axvline(x=0, color='#333333', linewidth=0.8)
 ax_e.set_yticks(list(y_e))
 ax_e.set_yticklabels(comp_sort['pathway'].values, fontsize=6)
 ax_e.set_xlabel('Total pathway signaling (prob sum)', fontsize=7)
-ax_e.set_title('(e) Pathway selectivity: 0% compensation', fontsize=8, fontweight='bold')
+ax_e.set_title('(e) Pathway Δ (KO − Baseline): selective TREM1 ablation', fontsize=8, fontweight='bold')
 ax_e.legend(handles=[
-    Patch(color='#4472C4', label='Baseline'),
-    Patch(facecolor='white', edgecolor='black', hatch='///', label='TREM1-KO'),
-    Patch(color='#CC0000', label='TREM1 pathway (ablated)')
+    Patch(color='#CC0000', label='TREM1 pathway'),
+    Patch(color='#4472C4', label='Other pathways')
 ], fontsize=6, loc='lower right')
 for spine in ax_e.spines.values():
     spine.set_visible(True); spine.set_linewidth(0.8)
@@ -162,6 +183,7 @@ ax_e.tick_params(direction='out', top=False, right=False, length=3, width=0.7)
 # ═══════════ F: Summary ═══════════
 ax_f = fig.add_subplot(gs[1, 2])
 ax_f.axis('off')
+ax_f.set_facecolor('#FAFAFA')
 
 # Key numbers
 hub_delta = abs(delta.loc['PLIN2+/TREM1+ Macrophage', 'delta_degree'])

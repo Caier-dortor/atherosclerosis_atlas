@@ -291,6 +291,9 @@ sns.boxplot(data=df_b, x='L2 Subtype', y='TI Composite', hue='Bed',
             order=subtype_order, palette=CB_PALETTE, ax=ax2, width=0.6, linewidth=0.8,
             flierprops=dict(marker='o', markersize=2, alpha=0.3), showmeans=True,
             meanprops=dict(marker='D', markersize=5, markerfacecolor='white', markeredgecolor='#333333'))
+# Diamond (◆) = donor-level mean; box center line = median
+ax2.text(0.02, 0.98, chr(9670) + ' = mean, center line = median', transform=ax2.transAxes,
+         fontsize=6, ha='left', va='top', color='#666666')
 ax2.set_xticklabels(ax2.get_xticklabels(), rotation=25, ha='right', fontsize=7)
 ax2.set_ylabel('TI Composite Score', fontsize=10)
 ax2.set_xlabel('')
@@ -318,9 +321,14 @@ epi_pivot = epi_plot.pivot_table(index='gene', columns='vascular_bed',
 epi_pivot_z = epi_pivot.subtract(epi_pivot.mean(axis=1), axis=0).divide(
     epi_pivot.std(axis=1), axis=0).fillna(0)
 sns.heatmap(epi_pivot_z, cmap='RdBu_r', center=0, ax=ax3,
-            annot=epi_pivot.round(3), fmt='.3f', annot_kws={'fontsize': 6.5},
+            annot=epi_pivot.round(3), fmt='.3f',
+            annot_kws={'fontsize': 6.5, 'fontweight': 'bold'},
             cbar_kws={'label': 'Z-score', 'shrink': 0.8},
             linewidths=0.5, linecolor='#EEEEEE')
+# Auto-set annot color for readability on dark cells
+for t in ax3.texts:
+    val = float(t.get_text())
+    t.set_color('white' if abs(val) > 1.2 else 'black')
 ax3.set_title('Epigenetic Enzyme Expression\n(Z-score by gene)', fontsize=10, fontweight='bold')
 ax3.tick_params(labelsize=8)
 fig.text(0.68, 0.95, 'C', fontsize=16, fontweight='bold')
@@ -386,11 +394,22 @@ for bed in ORDER:
     r_s, p_s = spearmanr(x, y)
     sig = "***" if p_s < 0.001 else "**" if p_s < 0.01 else "*" if p_s < 0.05 else f", p={p_s:.2e}"
     if bed == "femoral":
-        ax6.annotate(f"{bed}: r_s={r_s:.2f}{sig}\n(Femoral TI-Acute decoupling)",
-                     xy=(0.75, 0.85), xycoords="axes fraction",
-                     fontsize=11, color=CB_PALETTE[bed], fontweight="bold",
-                     bbox=dict(boxstyle="round,pad=0.5", facecolor="white",
-                               edgecolor=CB_PALETTE[bed], linewidth=2, alpha=0.9))
+        # Femoral n=7: use dagger for trend, add sample-size caveat
+        if bed == "femoral" and len(x) <= 10:
+            sig_display = sig.replace('*', chr(8224))  # dagger for trend
+            ax6.annotate(f"{bed}: r_s={r_s:.2f}{sig_display} (n={len(x)})\n(Femoral TI-Acute decoupling; limited by small n)",
+                         xy=(0.75, 0.87), xycoords="axes fraction",
+                         fontsize=10, color=CB_PALETTE[bed], fontweight="bold",
+                         bbox=dict(boxstyle="round,pad=0.5", facecolor="white",
+                                   edgecolor=CB_PALETTE[bed], linewidth=2, alpha=0.9))
+            ax6.text(0.98, 0.02, chr(8224) + ' = trend (n=' + str(len(x)) + ' donors, limited power)',
+                     transform=ax6.transAxes, fontsize=6.5, ha='right', va='bottom', color='grey')
+        else:
+            ax6.annotate(f"{bed}: r_s={r_s:.2f}{sig}\n(Femoral TI-Acute decoupling)",
+                         xy=(0.75, 0.85), xycoords="axes fraction",
+                         fontsize=11, color=CB_PALETTE[bed], fontweight="bold",
+                         bbox=dict(boxstyle="round,pad=0.5", facecolor="white",
+                                   edgecolor=CB_PALETTE[bed], linewidth=2, alpha=0.9))
     else:
         ax6.annotate(f"{bed}: r_s={r_s:.2f}{sig}",
                      xy=(0.05, 0.92 - 0.08 * ORDER.index(bed)),
@@ -399,6 +418,7 @@ for bed in ORDER:
 
 ax6.set_xlabel("Acute Inflammation Score", fontsize=12, fontweight="bold")
 ax6.set_ylabel("Trained Immunity Composite Score", fontsize=12, fontweight="bold")
+ax6.set_ylim(-0.35, 0.65)  # Focus on data range, trimming excess whitespace
 ax6.set_title("TI vs Acute Inflammation: Femoral-Specific Decoupling\n"
               "Femoral TI operates independently of acute inflammation (FAO-SIRT1-HDAC pathway)",
               fontsize=12, fontweight="bold", pad=12)

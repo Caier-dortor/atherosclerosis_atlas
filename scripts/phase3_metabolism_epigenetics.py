@@ -315,6 +315,16 @@ if 'carotid' in bed_corr_matrices and 'femoral' in bed_corr_matrices:
     for met in met_modules:
         for epi in epi_genes_expressed:
             diff_corr.loc[met, epi] = bed_corr_matrices['carotid'].loc[met, epi] - bed_corr_matrices['femoral'].loc[met, epi]
+    # Validate consistency: print key pairs for cross-check with Panel D
+    print('Panel C validation — Δr (Carotid − Femoral) for key pairs:')
+    for met_mod, epi in [('FAO_mean', 'SIRT1'), ('Glycolysis_mean', 'KMT2A'), ('FAO_mean', 'TET2')]:
+        if met_mod in diff_corr.index and epi in diff_corr.columns:
+            c_r = bed_corr_matrices['carotid'].loc[met_mod, epi]
+            f_r = bed_corr_matrices['femoral'].loc[met_mod, epi]
+            delta = diff_corr.loc[met_mod, epi]
+            print(f'  {met_mod} × {epi}: carotid={c_r:+.3f}, femoral={f_r:+.3f}, Δr={delta:+.3f}')
+            if abs(delta) > 0.5:
+                print(f'    WARNING: Large Δr — verify Panel D consistency')
     vmax_val = max(abs(diff_corr.values).max(), 0.5)
     sns.heatmap(diff_corr, cmap='RdBu_r', center=0, annot=True, fmt='.2f',
                 ax=ax3, annot_kws={'fontsize': 7.5},
@@ -344,7 +354,7 @@ for met_mod, epi in key_pairs:
         if len(bed_data) >= 3:
             r, p = spearmanr(bed_data[met_mod], bed_data[f'{epi}_expr'])
             mod_label = met_mod.split('_')[0]
-            sig = '*' if p < 0.05 else ''
+            sig = '' if p < 0.05 else ''  # no per-bar stars; stats in Fig legend''
             pair_data.append({'pair': f'{mod_label}-{epi}', 'bed': bed, 'r': r, 'sig': sig})
 if pair_data:
     pair_df = pd.DataFrame(pair_data)
