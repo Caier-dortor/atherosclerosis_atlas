@@ -17,7 +17,7 @@
 
 **Conclusions:** PLIN2+/TREM1+ macrophages constitute a conserved, non-redundant inflammatory signaling hub. TREM1 inhibition is predicted to dampen inflammatory communication without triggering compensatory activation—a favorable pharmacological profile for chronic cardiovascular disease. Femoral-specific metabolic-epigenetic programming co-exists with but is independent of the conserved hub architecture.
 
-**Keywords:** atherosclerosis; trained immunity; TREM1; single-cell RNA-seq; macrophage; ligand-receptor signaling; network centrality; vascular bed heterogeneity
+**Keywords:** atherosclerosis; trained immunity; TREM1; single-cell RNA-seq; macrophage; ligand-receptor signaling
 
 ---
 
