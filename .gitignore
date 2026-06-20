@@ -1,0 +1,27 @@
+# Data files
+*.h5ad
+*.h5
+*.hdf5
+data/
+results/**/*.h5ad
+results/**/*.csv
+results/**/*.pkl
+results/**/*.npz
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# R
+.RData
+.Rhistory
+.Rproj.user/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
